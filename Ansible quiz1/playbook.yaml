@@ -1,0 +1,44 @@
+- name: Install package
+  hosts: hosts
+  become: true
+  tasks:
+    - name: Install Apache2,Mariadb,php,php-mysql
+      apt:
+        pkg:
+          - apache2
+          - mariadb-server
+          - php
+          - php-mysql
+        state: latest
+        update_cache: true
+
+    - name: ensure the apache2 has started
+      service:
+        name: apache2
+        state: started
+        enabled: true
+
+    - name: ensure the mariadb has started
+      service:
+        name: mariadb
+        state: started
+        enabled: true
+
+    - name: generate index.php
+      ansible.builtin.copy:
+        content: 'Adinusa quiz Playbook - adityadw'
+        dest: /var/www/html/index.php
+        
+- name: verify web server is accessible
+  hosts: hosts
+  become: true
+  tasks:
+    - name: testing web server
+      uri:
+        url: http://pod-adityadw-managed2/
+        status_code: 200
+        return_content: yes
+      register: Result
+    - name: Print Ouput web server
+      debug:
+        var: Result.content
