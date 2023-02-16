@@ -1,0 +1,15 @@
+- name: create new user
+  hosts: pod-adityadw-managed1
+  become: true
+
+  vars_files:
+    - secret.yml
+  tasks:
+    - name: Create multiple user with password
+      user:
+        name: "{{ item }}"
+        password: "{{pass | password_hash('sha512')}}"
+      loop:
+         - ops1
+         - ops2
+         - ops3
